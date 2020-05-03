@@ -1,0 +1,43 @@
+# This file is used only for the local development, all
+# deployed AWS environments use kubernetes for container 
+# orchestration
+version: '3'
+
+services:
+
+  postgres_service:
+   container_name: heavyweight_postgres
+   restart: always
+   image: postgres:10.7
+   volumes:
+     - postgres-data:/var/lib/postgresql/data
+     - ./postgresql/init:/docker-entrypoint-initdb.d
+   ports:
+     - "5432:5432"
+   environment:
+     - POSTGRES_USER=admin
+     - POSTGRES_PASSWORD=password
+  
+  flask_service:
+    container_name: heavyweight_flask
+    restart: always
+    image: flask
+    build: 
+      context: ./flask
+      dockerfile: Dockerfile
+    depends_on:
+        - postgres_service
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./flask/app:/var/www/flask/app
+      - ./flask/migrations:/var/www/flask/migrations
+      - ./flask/config:/var/www/flask/config
+    environment:
+        - FLASK_APP=wsgi.py
+        - FLASK_DEBUG=1
+        - CONFIG_PATH=config/local
+
+volumes:
+  postgres-data:
+    driver: local
