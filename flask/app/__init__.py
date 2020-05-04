@@ -12,6 +12,7 @@ def init_db(app):
     # We shouldn't import these models manually
     from app.status import models as StatusModels
     from app.auth import models as AuthModels
+
     db.init_app(app)
     migrate.init_app(app, db)
 
@@ -32,13 +33,21 @@ def load_config(app):
     app.config.from_object(DevelopmentConfig())
 
 
+def register_error_handlers(app):
+    """Registers global error handlers for exception types.
+    These can be overridden in the views if needed"""
+    from app.common.exceptions import ValidationException, handle_validation_error
+
+    app.register_error_handler(ValidationException, handle_validation_error)
+
+
 def create_app(flask_config_name=None, **kwargs):
     app = Flask(__name__, **kwargs)
     load_config(app)
     register_blueprints(app)
+    register_error_handlers(app)
     init_db(app)
     CORS(app)
 
     # setup_logging(app.config)
-    # register_error_handlers(app)
     return app

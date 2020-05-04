@@ -6,7 +6,7 @@ from passlib.hash import pbkdf2_sha256 as sha256
 class AuthUser(AuthModel):
     __tablename__ = "auth_user"
 
-    name = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
 
     @staticmethod

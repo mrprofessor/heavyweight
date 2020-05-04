@@ -1,10 +1,16 @@
+from flask import request
 from flask_classful import route
 from app.common.views import BaseView
+from app.auth.schemas import AuthUserSchema
 
 
 class RegistrationView(BaseView):
     route_base = "/"
 
-    @route("/registration/", methods=["GET"])
+    @route("/registration/", methods=["POST"])
     def registration(self):
-        return {"yo": "this is registration api"}, 200
+        """ Register new auth users """
+
+        auth_input = self.load_input_data(AuthUserSchema(), request.json)
+
+        return auth_input, 200

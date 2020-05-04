@@ -1,8 +1,10 @@
 from flask import request, make_response, jsonify
 from flask import current_app as app
 from flask_classful import FlaskView
+from marshmallow import ValidationError
 
 from app.common.representations.default import output_json
+from app.common.exceptions import ValidationException
 
 
 class BaseView(FlaskView):
@@ -29,3 +31,16 @@ class BaseView(FlaskView):
             },
         }
         return r_params
+
+    def load_input_data(self, schema, data):
+        """ Load and validate response input data """
+        try:
+            result = schema.load(data)
+            return result
+        except ValidationError as err:
+            # FIXME
+            # err.messages will break if exception arises due to a different
+            # exception
+            # result = jsonify({"message": FAILURE_MSG, "error_fields": err.messages})
+            # return result, 400
+            raise ValidationException(payload=err.messages)
