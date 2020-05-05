@@ -25,6 +25,16 @@ class APIException(Exception):
         return self.detail
 
 
+class ServiceException(APIException):
+    def __init__(
+        self,
+        detail,
+        status_code=status_codes.HTTP_422_UNPROCESSABLE_REQUEST,
+        payload=None,
+    ):
+        super().__init__(detail, status_code, payload)
+
+
 class AuthenticationException(APIException):
     status_code = status_codes.HTTP_401_UNAUTHORIZED
     detail = "Incorrect authentication credentials"

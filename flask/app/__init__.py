@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -36,9 +37,9 @@ def load_config(app):
 def register_error_handlers(app):
     """Registers global error handlers for exception types.
     These can be overridden in the views if needed"""
-    from app.common.exceptions import ValidationException, handle_validation_error
+    from app.common.exceptions import APIException, handle_validation_error
 
-    app.register_error_handler(ValidationException, handle_validation_error)
+    app.register_error_handler(APIException, handle_validation_error)
 
 
 def create_app(flask_config_name=None, **kwargs):
@@ -48,6 +49,7 @@ def create_app(flask_config_name=None, **kwargs):
     register_error_handlers(app)
     init_db(app)
     CORS(app)
+    jwt = JWTManager(app)
 
     # setup_logging(app.config)
     return app

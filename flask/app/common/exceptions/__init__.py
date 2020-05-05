@@ -1,4 +1,6 @@
 from .api_exeptions import (
+    APIException,
+    ServiceException,
     ValidationException,
     NotFoundException,
     AuthenticationException,
